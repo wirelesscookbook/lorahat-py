@@ -2,43 +2,48 @@ import os, sys
 currentdir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.dirname(os.path.dirname(currentdir)))
 from LoRaRF import SX126x
+import toml
 import time
 
-# Begin LoRa radio and set NSS, reset, busy, IRQ, txen, and rxen pin with connected Raspberry Pi gpio pins
-# IRQ pin not used in this example (set to -1). Set txen and rxen pin to -1 if RF module doesn't have one
-busId = 0; csId = 0 
-resetPin = 18; busyPin = 20; irqPin = 16; txenPin = 6; rxenPin = -1 
+# Load configuration from TOML file
+t = toml.load('config.toml')
+
+busId = t.get('busId')
+csId = t.get('csId')
+resetPin = t.get('resetPin')
+busyPin = t.get('busyPin')
+irqPin = t.get('irqPin')
+txenPin = t.get('txenPin')
+rxenPin = t.get('rxenPin')
 LoRa = SX126x()
 print("Begin LoRa radio")
+# Begin LoRa radio with configured Raspberry Pi GPIO pins
 if not LoRa.begin(busId, csId, resetPin, busyPin, irqPin, txenPin, rxenPin) :
     raise Exception("Something wrong, can't begin LoRa radio")
 
 LoRa.setDio2RfSwitch()
-# Set frequency to 868 Mhz
-print("Set frequency to 868 Mhz")
-LoRa.setFrequency(868000000)
+# Set frequency
+frequency_hz = int(t.get('frequency'))
+frequency_mhz = round(frequency_hz / 1_000_000)
+print(f"Set frequency to {frequency_mhz} Mhz")
+LoRa.setFrequency(frequency_hz)
 
-# Set TX power, default power for SX1262 and SX1268 are +22 dBm and for SX1261 is +14 dBm
 # This function will set PA config with optimal setting for requested TX power
-print("Set TX power to +22 dBm")
-LoRa.setTxPower(22, LoRa.TX_POWER_SX1262)                       # TX power +17 dBm using PA boost pin
+txPower = int(t.get('txPower'))
+print(f"Set TX power to +{txPower} dBm")
+LoRa.setTxPower(txPower, LoRa.TX_POWER_SX1262)                       # TX power +17 dBm using PA boost pin
 
-# Configure modulation parameter including spreading factor (SF), bandwidth (BW), and coding rate (CR)
-# Receiver must have same SF and BW setting with transmitter to be able to receive LoRa packet
-print("Set modulation parameters:\n\tSpreading factor = 7\n\tBandwidth = 125 kHz\n\tCoding rate = 4/5")
-sf = 7                                                          # LoRa spreading factor: 7
-bw = 125000                                                     # Bandwidth: 125 kHz
-cr = 5                                                          # Coding rate: 4/5
+sf = int(t.get('spreadFactor'))
+bw = int(t.get('bandwidth'))
+cr = int(t.get('codingRate'))
+print(f"Set modulation parameters:\n\tSpreading factor = {sf}\n\tBandwidth = {round(bw / 1000)} kHz\n\tCoding rate = 4/{cr}")
 LoRa.setLoRaModulation(sf, bw, cr)
 
-# Configure packet parameter including header type, preamble length, payload length, and CRC type
-# The explicit packet includes header contain CR, number of byte, and CRC type
-# Receiver can receive packet with different CR and packet parameters in explicit header mode
-print("Set packet parameters:\n\tExplicit header type\n\tPreamble length = 12\n\tPayload Length = 15\n\tCRC on")
 headerType = LoRa.HEADER_EXPLICIT                               # Explicit header mode
-preambleLength = 12                                             # Set preamble length to 12
-payloadLength = 15                                              # Initialize payloadLength to 15
-crcType = True                                                  # Set CRC enable
+preambleLength = int(t.get('preambleLength'))
+payloadLength = int(t.get('payloadLength'))
+crcType = bool(t.get('crcType'))
+print(f"Set packet parameters:\n\tExplicit header type\n\tPreamble length = {preambleLength}\n\tPayload Length = {payloadLength}\n\tCRC {crcType}")
 LoRa.setLoRaPacket(headerType, preambleLength, payloadLength, crcType)
 
 # Set syncronize word for public network (0x3444)
@@ -48,7 +53,7 @@ LoRa.setSyncWord(0x3444)
 print("\n-- LoRa Transmitter --\n")
 
 # Message to transmit
-message = "HeLoRa World!\0"
+message = str(t.get('message'))
 messageList = list(message)
 for i in range(len(messageList)) : messageList[i] = ord(messageList[i])
 counter = 0
