@@ -11,20 +11,24 @@ rxenPin = -1
 # Set frequency to 868 Mhz.
 frequency = 868000000
 
-# Set transmit power. Default for SX126x is +22 dBm. Valid for transmitter only.
+# Set transmit power. Default for SX126x is +22 dBm.
+# Valid for transmitter only.
 txPower = 22
 
-# Modulation parameters include spreading factor (SF), bandwidth (BW), and coding rate (CR).
-# Receiver must have same SF and BW settings with transmitter to be able to receive a LoRa packet.
+# Modulation parameters include spreading factor (SF), bandwidth (BW),
+# and coding rate (CR). Receiver must have same SF and BW settings with
+# transmitter to be able to receive a LoRa packet.
 spreadFactor = 7
 bandwidth = 125000
 codingRate = 5
 
-# Configure packet parameter including header type, preamble length, payload length, and CRC type
-# The explicit packet includes header contain CR, number of byte, and CRC type
-# Receiver can receive packet with different CR and packet parameters in explicit header mode
+# Configure packet parameter including header type, preamble length,
+# payload length, and CRC type. The explicit packet includes header
+# contain CR, number of byte, and CRC type.  Receiver can receive a 
+# packet with different CR and packet parameters in explicit header mode.
 preambleLength = 12
 payloadLength = 15
 crcType = true
 
 message = "HeLoRa World!\0"
+
