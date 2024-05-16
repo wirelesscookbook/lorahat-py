@@ -28,9 +28,9 @@ frequency_mhz = round(frequency_hz / 1_000_000)
 print(f"Set frequency to {frequency_mhz} Mhz")
 LoRa.setFrequency(frequency_hz)
 
-# Set RX gain. RX gain option are power saving gain or boosted gain
+# Set RX gain to power saving gain
 print("Set RX gain to power saving gain")
-LoRa.setRxGain(LoRa.RX_GAIN_POWER_SAVING)                       # Power saving gain
+LoRa.setRxGain(LoRa.RX_GAIN_POWER_SAVING)
 
 sf = int(t.get('spreadFactor'))
 bw = int(t.get('bandwidth'))
@@ -49,34 +49,37 @@ LoRa.setLoRaPacket(headerType, preambleLength, payloadLength, crcType)
 print("Set syncronize word to 0x3444")
 LoRa.setSyncWord(0x3444)
 
-print("\n-- LoRa Receiver --\n")
+# Set syncronize word for public network (0x3444)
+print("Set syncronize word to 0x3444")
+LoRa.setSyncWord(0x3444)
+
+print("\n-- LoRa Receiver Continuous --\n")
+
+# Request for receiving new LoRa packet in RX continuous mode
+LoRa.request(LoRa.RX_CONTINUOUS)
 
 # Receive message continuously
 while True :
 
-    # Request for receiving new LoRa packet
-    LoRa.request()
-    # Wait for incoming LoRa packet
-    LoRa.wait()
+    # Check for incoming LoRa packet
+    if LoRa.available() :
 
-    # Put received packet to message and counter variable
-    # read() and available() method must be called after request() or listen() method
-    message = ""
-    # available() method return remaining received payload length and will decrement each read() or get() method called
-    while LoRa.available() > 1 :
-        message += chr(LoRa.read())
-    counter = LoRa.read()
+        # Put received packet to message and counter variable
+        message = ""
+        while LoRa.available() > 1 :
+            message += chr(LoRa.read())
+        counter = LoRa.read()
 
-    # Print received message and counter in serial
-    print(f"{message}  {counter}")
+        # Print received message and counter in serial
+        print(f"{message}  {counter}")
 
-    # Print packet/signal status including RSSI, SNR, and signalRSSI
-    print("Packet status: RSSI = {0:0.2f} dBm | SNR = {1:0.2f} dB".format(LoRa.packetRssi(), LoRa.snr()))
+        # Print packet/signal status including RSSI, SNR, and signalRSSI
+        print("Packet status: RSSI = {0:0.2f} dBm | SNR = {1:0.2f} dB".format(LoRa.packetRssi(), LoRa.snr()))
 
-    # Show received status in case CRC or header error occur
-    status = LoRa.status()
-    if status == LoRa.STATUS_CRC_ERR : print("CRC error")
-    elif status == LoRa.STATUS_HEADER_ERR : print("Packet header error")
+        # Show received status in case CRC or header error occur
+        status = LoRa.status()
+        if status == LoRa.STATUS_CRC_ERR : print("CRC error")
+        if status == LoRa.STATUS_HEADER_ERR : print("Packet header error")
 
 try :
     pass
