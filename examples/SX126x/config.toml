@@ -30,5 +30,8 @@ preambleLength = 12
 payloadLength = 15
 crcType = true
 
+# LoRa message to send. If set to "temperature" the transmitter's CPU
+# temperature will be sent in the payload.
 message = "HeLoRa World!\0"
+#message = "temperature"
 

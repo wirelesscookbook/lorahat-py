@@ -53,13 +53,25 @@ LoRa.setSyncWord(0x3444)
 print("\n-- LoRa Transmitter --\n")
 
 # Message to transmit
-message = str(t.get('message'))
-messageList = list(message)
-for i in range(len(messageList)) : messageList[i] = ord(messageList[i])
+message = str(t.get('message', 'HeLoRa World!\0'))
 counter = 0
 
 # Transmit message continuously
 while True :
+
+    if message == "temperature":
+        try:
+            # Read the CPU temperature from the system file
+            with open('/sys/class/thermal/thermal_zone0/temp', 'r') as temp_file:
+                temp = temp_file.read().strip()
+                cpu_temp = float(temp) / 1000.0
+                temp_msg = f"CPU temperature: {cpu_temp:.2f}°C"
+        except FileNotFoundError:
+            temp_msg = "Unable to read CPU temperature"
+    else:
+        temp_msg = message
+
+    messageList = [ord(char) for char in temp_msg]
 
     # Transmit message and counter
     # write() method must be placed between beginPacket() and endPacket()
@@ -69,7 +81,7 @@ while True :
     LoRa.endPacket()
 
     # Print message and counter
-    print(f"{message}  {counter}")
+    print(f"{temp_msg}  {counter}")
 
     # Wait until modulation process for transmitting packet finish
     LoRa.wait()
