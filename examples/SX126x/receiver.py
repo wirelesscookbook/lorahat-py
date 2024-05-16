@@ -49,10 +49,6 @@ LoRa.setLoRaPacket(headerType, preambleLength, payloadLength, crcType)
 print("Set syncronize word to 0x3444")
 LoRa.setSyncWord(0x3444)
 
-# Set syncronize word for public network (0x3444)
-print("Set syncronize word to 0x3444")
-LoRa.setSyncWord(0x3444)
-
 print("\n-- LoRa Receiver Continuous --\n")
 
 # Request for receiving new LoRa packet in RX continuous mode
