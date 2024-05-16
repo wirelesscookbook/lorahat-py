@@ -22,10 +22,10 @@ spreadFactor = 7
 bandwidth = 125000
 codingRate = 5
 
-# Configure packet parameter including header type, preamble length,
-# payload length, and CRC type. The explicit packet includes header
-# contain CR, number of byte, and CRC type.  Receiver can receive a 
-# packet with different CR and packet parameters in explicit header mode.
+# Packet parameters include header preamble length, payload length and
+# CRC type. The explicit packet type is used by default and uses these
+# parameters. The receiver can receive a packet with different coding
+# rates and packet parameters in explicit header mode.
 preambleLength = 12
 payloadLength = 15
 crcType = true
