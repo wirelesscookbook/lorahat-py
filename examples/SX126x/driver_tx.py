@@ -3,19 +3,29 @@ currentdir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.dirname(os.path.dirname(currentdir)))
 from LoRaRF import SX126x
 import RPi.GPIO
+import toml
 import time
 
-busId = 0; csId = 0 
-resetPin = 18; busyPin = 20; irqPin = 16; txenPin = 6; rxenPin = -1 
+# Load configuration from TOML file
+t = toml.load('config.toml')
+
+busId = t.get('busId')
+csId = t.get('csId')
+resetPin = t.get('resetPin')
+busyPin = t.get('busyPin')
+irqPin = t.get('irqPin')
+txenPin = t.get('txenPin')
+rxenPin = t.get('rxenPin')
+LoRa = SX126x()
+print("Begin LoRa radio")
 
 LoRa = SX126x()
 GPIO = RPi.GPIO
 
-# Xtal setting
-# xtalCap = [0x12, 0x12]
-
-# RF frequency setting
-rfFrequency = 868000000
+# Set frequency
+rfFrequency = int(t.get('frequency'))
+frequency_mhz = round(rfFrequency / 1_000_000)
+print(f"Set frequency to {frequency_mhz} Mhz")
 
 # PA and TX power setting
 paDutyCycle = 0x02
