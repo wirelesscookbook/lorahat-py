@@ -18,7 +18,7 @@ txPower = 22
 # Modulation parameters include spreading factor (SF), bandwidth (BW),
 # and coding rate (CR). Receiver must have same SF and BW settings with
 # transmitter to be able to receive a LoRa packet.
-spreadFactor = 7
+spreadFactor = 9
 bandwidth = 125000
 codingRate = 5
 
@@ -35,3 +35,5 @@ crcType = true
 message = "HeLoRa World!\0"
 #message = "temperature"
 
+# Interval in seconds between transmitter sending LoRa messages.
+sleepTime = 5
