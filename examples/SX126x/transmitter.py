@@ -50,6 +50,10 @@ LoRa.setLoRaPacket(headerType, preambleLength, payloadLength, crcType)
 print("Set syncronize word to 0x3444")
 LoRa.setSyncWord(0x3444)
 
+# Set sleep interval between sending messages
+sleepTime = int(t.get('sleepTime', 5))
+print(f"Sleep time = {sleepTime} seconds")
+
 print("\n-- LoRa Transmitter --\n")
 
 # Message to transmit
@@ -90,7 +94,7 @@ while True :
     print("Transmit time: {0:0.2f} ms | Data rate: {1:0.2f} byte/s".format(LoRa.transmitTime(), LoRa.dataRate()))
 
     # Don't load RF module with continous transmit
-    time.sleep(5)
+    time.sleep(sleepTime)
     counter = (counter + 1) % 256
 
 try :
