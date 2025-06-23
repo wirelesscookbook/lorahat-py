@@ -45,8 +45,8 @@ crcType = bool(t.get('crcType'))
 print(f"Set packet parameters:\n\tExplicit header type\n\tPreamble length = {preambleLength}\n\tPayload Length = {payloadLength}\n\tCRC {crcType}")
 LoRa.setLoRaPacket(headerType, preambleLength, payloadLength, crcType)
 
-# Set syncronize word for public network (0x3444)
-print("Set syncronize word to 0x3444")
+# Set synchronize word for public network (0x3444)
+print("Set synchronize word to 0x3444")
 LoRa.setSyncWord(0x3444)
 
 print("\n-- LoRa Receiver Continuous --\n")
